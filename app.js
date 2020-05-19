@@ -37,7 +37,10 @@ app.get("/", (req, res) => {
 
 // DEEPBOT
 app.post("/deepbot/deepquestion", (req, res) => {
+  // GET QUESTION
   QuestionModel.find((err, questions) => {
+    if (err) throw err;
+
     const question = questions[0];
 
     if (question) {
@@ -51,6 +54,9 @@ app.post("/deepbot/deepquestion", (req, res) => {
         text: "No more questions in our database!"
       });
     }
+
+    // DELETE QUESTION 
+    QuestionModel.remove({ _id: question._id }, err => { if (err) throw err; })
   });
 });
 
