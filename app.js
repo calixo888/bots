@@ -1,5 +1,5 @@
 const express = require("express");
-const mongodb = require("mongodb");
+const mongoose = require("mongoose");
 const cookieParser = require("cookie-parser");
 
 const app = express()
@@ -17,10 +17,19 @@ app.set('views', __dirname + '/views');
 app.use('/static', express.static(__dirname + '/static'))
 app.engine('html', require('ejs').renderFile);
 
-// Configuring MongoDB
-const MongoClient = mongodb.MongoClient;
-const ObjectId = mongodb.ObjectId;
+// Configuring Mongoose
 const mongoUrl = process.env.MONGODB_URI || "mongodb://localhost:27017";
+mongoose.connect(mongoUrl, {
+  useNewUrlParser: true,
+  useUnifiedTopology: true
+});
+const db = mongoose.connection;
+db.on('error', console.error.bind(console, '[-] Connection error'));
+const questionSchema = new mongoose.Schema({
+  question: String,
+  author: String
+});
+const QuestionModel = mongoose.model("Question", questionSchema);
 
 app.get("/", (req, res) => {
   res.send("bots boi")
@@ -35,11 +44,18 @@ app.post("/deepbot/deepquestion", (req, res) => {
 });
 
 app.post("/deepbot/addquestion", (req, res) => {
-  console.log(req.params);
-  console.log(req.body);
+  const question = req.body.text;
+  const author = req.body.user_name;
+
+  // ADD QUESTION TO DATABASE
+  const newQuestion = new QuestionModel({
+    question, author
+  });
+  newQuestion.save((err, newQuestion) => { if (err) throw err; });
+
   res.send({
     response_type: "in_channel",
-    text: `New question added! ${req.body.text}`
+    text: `New question added! ${question} - ${author}`
   })
 });
 
