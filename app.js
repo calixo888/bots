@@ -37,9 +37,20 @@ app.get("/", (req, res) => {
 
 // DEEPBOT
 app.post("/deepbot/deepquestion", (req, res) => {
-  res.send({
-    response_type: "in_channel",
-    text: "Currently under development..."
+  QuestionModel.find((err, questions) => {
+    const question = questions[0];
+
+    if (question) {
+      res.send({
+        response_type: "in_channel",
+        text: `Question by ${question.author}: ${question.question}`
+      });
+    } else {
+      res.send({
+        response_type: "in_channel",
+        text: "No more questions in our database!"
+      });
+    }
   });
 });
 
