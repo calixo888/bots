@@ -18,7 +18,7 @@ app.use('/static', express.static(__dirname + '/static'))
 app.engine('html', require('ejs').renderFile);
 
 // Configuring Mongoose
-const mongoUrl = process.env.MONGODB_URI || "mongodb://localhost:27017";
+const mongoUrl = process.env.MONGODB_URI + "/deepbot" || "mongodb://localhost:27017/deepbot";
 mongoose.connect(mongoUrl, {
   useNewUrlParser: true,
   useUnifiedTopology: true
@@ -55,7 +55,7 @@ app.post("/deepbot/addquestion", (req, res) => {
 
   res.send({
     response_type: "in_channel",
-    text: `New question added! ${question} - ${author}`
+    text: `New question added by ${author}! ${question}`
   })
 });
 
