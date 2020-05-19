@@ -35,6 +35,7 @@ app.post("/deepbot/deepquestion", (req, res) => {
 });
 
 app.post("/deepbot/addquestion", (req, res) => {
+  console.log(req.params);
   res.send({
     response_type: "in_channel",
     text: `New question added! ${req.params.text}`
